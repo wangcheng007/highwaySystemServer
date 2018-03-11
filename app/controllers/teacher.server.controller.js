@@ -3,12 +3,8 @@ export async function findAll(ctx) {
 		Teacher
 	} = ctx.orm();
 
-	const teachers = async function() {
-		const teachers = await Teacher.findById(1);
-		return teachers;
-	}
+	const teachers = await Teacher.findAll();
 
-	console.log(teachers());
 	ctx.body = {
 		teachers
 	};

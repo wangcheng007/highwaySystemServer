@@ -17,8 +17,8 @@ export default function() {
 	app.use(logger());
 
 	// session
-	// app.keys = config.keys;
-	// app.use(session(config.session), app);
+	app.keys = config.keys;
+	app.use(session(config.session, app));
 
 	// view
 	// app.use(view(config.viewPath, {

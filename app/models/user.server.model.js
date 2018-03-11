@@ -6,6 +6,11 @@ module.exports = function(sequelize, DataTypes) {
 			autoIncrement: true,
 			comment: 'ID'
 		}
+	}, {
+		paranoid: true,
+		freezeTableName: true,
+		updatedAt: false,
+		deletedAt: false
 	});
 
 	return User;
