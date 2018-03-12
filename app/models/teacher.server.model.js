@@ -9,8 +9,7 @@ module.exports = function(sequelize, DataTypes) {
 	}, {
 		paranoid: true,
 		freezeTableName: true,
-		updatedAt: false,
-		deletedAt: false
+		updatedAt: false
 	});
 
 

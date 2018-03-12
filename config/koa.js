@@ -5,6 +5,7 @@ import bodyParser from 'koa-bodyparser';
 import session from 'koa-session';
 import view from 'koa-view';
 import ORM from 'koa-orm';
+import cors from 'koa2-cors';
 
 import config from './config';
 import routes from '../app/routes/index';
@@ -40,6 +41,18 @@ export default function() {
 	// error(app);
 	// flash(app);
 	// mail(app, config.mail);
+
+	// cors
+	app.use(cors({
+		origin: function(ctx) {
+			return '*';
+		},
+		// exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+		maxAge: 5,
+		credentials: true,
+		allowMethods: ['GET', 'POST'],
+		allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+	}));
 
 	// Routes
 	routes(app, config);
