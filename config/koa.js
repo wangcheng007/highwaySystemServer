@@ -7,7 +7,6 @@ import view from 'koa-view';
 import ORM from 'koa-orm';
 
 import cors from '../app/middlewares/cors';
-import auth from '../app/middlewares/auth';
 
 import config from './config';
 import routes from '../app/routes/index';
@@ -26,20 +25,22 @@ export default function() {
 	// ORM
 	app.orm = ORM(config.database);
 	app.use(app.orm.middleware);
+	
 
+	console.log('start connect jcdb...');
 	// sync detabase
 	app.orm.database().sync({
 		force: false
 	}).then( () => {
-		console.log('Sync done.');
+		console.log('success!!!');
 	});
 
 	// middlewares
 	cors(app, config);
-	auth(app);
 
 	// Routes
 	routes(app, config);
 
+	console.log('success koa server...');
 	return app;
 }
