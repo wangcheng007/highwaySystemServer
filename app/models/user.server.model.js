@@ -5,6 +5,12 @@ module.exports = function(sequelize, DataTypes) {
 			primaryKey: true,
 			autoIncrement: true,
 			comment: 'ID'
+		},
+		username: {
+			type: DataTypes.STRING
+		},
+		password: {
+			type: DataTypes.STRING
 		}
 	}, {
 		paranoid: true,

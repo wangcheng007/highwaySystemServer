@@ -14,13 +14,68 @@ export async function login(ctx) {
 	const { User } = ctx.orm();
 	const { username, password } = ctx.request.body;
 
-	ctx.assert(username, 400, 'username is required');
-	ctx.assert(password, 400, 'password is required');
-	  
-	const user = await User.auth(username, password);
+	if (!username) {
+		ctx.body = { 
+			data: {
 
-	ctx.assert(user, 403, 'password is invalid');
+			},
+			returnCode: '4000',
+			message: 'username is required'
+		};
+		return;
+	}
+
+	if (!password) {
+		ctx.body = { 
+			data: {
+				
+			},
+			returnCode: '4000',
+			message: 'password is required'
+		};
+		return;
+	}
+
+	const user = await User.find({
+		where: {
+			username: username,
+			password: password
+		}
+	});
+
+	if (!user) {
+		ctx.body = { 
+			data: {
+				
+			},
+			returnCode: '4003',
+			message: 'password is invalid'
+		};
+		return;
+	}
+
 	ctx.session.authenticated = true;
 	ctx.session.user = user;
-	ctx.body = { username };
+
+	ctx.body = { 
+		data: {
+			user
+		},
+		returnCode: '1001',
+		message: 'success' 
+	};
+}
+
+export async function getsession(ctx) {
+	let user = ctx.session.user;
+	let authenticated = ctx.session.authenticated;
+
+	ctx.body = {
+		data: {
+			user,
+			authenticated
+		},
+		returnCode: '1001',
+		message: 'success' 
+	}
 }
