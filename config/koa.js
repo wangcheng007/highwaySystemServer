@@ -26,7 +26,7 @@ export default function() {
 	app.orm = ORM(config.database);
 	app.use(app.orm.middleware);
 	
-
+	
 	console.log('start connect jcdb...');
 	// sync detabase
 	app.orm.database().sync({

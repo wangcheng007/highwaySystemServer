@@ -1,6 +1,6 @@
 // 登录
 export async function login(ctx) {
-	const { User } = ctx.orm();
+	const { user } = ctx.orm();
 	const { username, password } = ctx.request.body;
 
 	if (!username) {
@@ -25,14 +25,14 @@ export async function login(ctx) {
 		return;
 	}
 
-	const user = await User.find({
+	const userInfo = await user.find({
 		where: {
 			username: username,
 			password: password
 		}
 	});
 
-	if (!user) {
+	if (!userInfo) {
 		ctx.body = { 
 			data: {
 				
@@ -44,11 +44,11 @@ export async function login(ctx) {
 	}
 
 	ctx.session.authenticated = true;
-	ctx.session.user = user;
+	ctx.session.user = userInfo;
 
 	ctx.body = { 
 		data: {
-			user
+			user: userInfo
 		},
 		returnCode: '1001',
 		message: 'success' 
@@ -97,5 +97,27 @@ export async function logout(ctx, next) {
 			returnCode: '2002',
 			message: 'faild' 
 		}
+	}
+}
+
+// 获取人员的权限
+export async function getPermissionByUserId(ctx) {
+	const { user, permission } = ctx.orm();
+	const userId = ctx.session.user.id;
+
+	const user_permission = await user.findById(userId, {
+		include: [
+			{
+				model: permission
+			}
+		]
+	});
+
+	ctx.body = {
+		data: {
+			user_permission: user_permission
+		},
+		returnCode: '1001',
+		message: 'success' 
 	}
 }

@@ -1,18 +1,21 @@
-function userModel(sequelize, DataTypes) {
-	const user = sequelize.define('user', {
+function permissionModel(sequelize, DataTypes) {
+	const permission = sequelize.define('permission', {
 		id: {
 			type: DataTypes.BIGINT.UNSIGNED,
 			primaryKey: true,
 			autoIncrement: true,
 			comment: 'ID'
 		},
-		username: {
+		permission_name: {
 			type: DataTypes.STRING
 		},
-		password: {
+		path_router: {
 			type: DataTypes.STRING
 		},
-		img: {
+		small_img: {
+			type: DataTypes.STRING
+        },
+        big_img: {
 			type: DataTypes.STRING
 		}
 	}, {
@@ -22,7 +25,7 @@ function userModel(sequelize, DataTypes) {
 		collate: 'utf8_general_ci'
 	});
 
-	return user;
+	return permission;
 }
 
-export default userModel;
+export default permissionModel;
