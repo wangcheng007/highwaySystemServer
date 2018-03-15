@@ -5,7 +5,6 @@ export default function routes(app) {
 	const router = new Router();
 	// 加载user路由
 	user(router);
-	teacher(router);
 
 	app.use(router.routes());
 	app.use(router.allowedMethods());
