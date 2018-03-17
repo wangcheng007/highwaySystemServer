@@ -1,6 +1,8 @@
+import { getPermissionByParentId } from './permission.server.controller';
+
 // 登录
 export async function login(ctx) {
-	const { user } = ctx.orm();
+	const { User } = ctx.orm();
 	const { username, password } = ctx.request.body;
 
 	if (!username) {
@@ -25,7 +27,7 @@ export async function login(ctx) {
 		return;
 	}
 
-	const userInfo = await user.find({
+	const userInfo = await User.find({
 		where: {
 			username: username,
 			password: password
@@ -55,6 +57,7 @@ export async function login(ctx) {
 	};
 }
 
+// 获取登录信息
 export async function info(ctx) {
 	let user = ctx.session.user;
 	let authenticated = ctx.session.authenticated;
@@ -70,10 +73,7 @@ export async function info(ctx) {
 		}
 	} else {
 		ctx.body = {
-			data: {
-				user,
-				authenticated
-			},
+			data: {},
 			returnCode: '2002',
 			message: 'fail' 
 		}
@@ -100,24 +100,36 @@ export async function logout(ctx, next) {
 	}
 }
 
-// 获取人员的权限
-export async function getPermissionByUserId(ctx) {
-	const { user, permission } = ctx.orm();
-	const userId = ctx.session.user.id;
+// // 获取人员的权限
+// export async function getPermissionByUserId(ctx) {
+// 	const { User, Permission } = ctx.orm();
+// 	const userId = ctx.session.user.id;
 
-	const user_permission = await user.findById(userId, {
-		include: [
-			{
-				model: permission
-			}
-		]
-	});
+// 	const user_permission = await User.findById(userId, {
+// 		order: [
+// 			[Permission, 'permission_order']
+// 		],
+// 		include: [
+// 			{
+// 				model: Permission
+// 			}
+// 		]
+// 	});
 
-	ctx.body = {
-		data: {
-			user_permission: user_permission
-		},
-		returnCode: '1001',
-		message: 'success' 
-	}
-}
+// 	const permissions = [];
+// 	const parrntIds = [];
+
+// 	console.log(user_permission.getPermissions());
+// 	// user_permission && user_permission.Permission.map((permission) => {
+
+// 	// });
+
+
+// 	ctx.body = {
+// 		data: {
+// 			user_permission: user_permission
+// 		},
+// 		returnCode: '1001',
+// 		message: 'success' 
+// 	}
+// }

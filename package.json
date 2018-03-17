@@ -4,6 +4,7 @@
   "description": "\u001bgraduationDesign",
   "main": "index.js",
   "scripts": {
+    "build": "babel -d dist --source-maps",
     "dev": "babel-node debug bin/www",
     "start": "babel-node bin/www"
   },

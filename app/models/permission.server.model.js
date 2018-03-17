@@ -1,5 +1,6 @@
-function permissionModel(sequelize, DataTypes) {
-	const permission = sequelize.define('permission', {
+// 权限model
+function PermissionModel(sequelize, DataTypes) {
+	const Permission = sequelize.define('Permission', {
 		id: {
 			type: DataTypes.BIGINT.UNSIGNED,
 			primaryKey: true,
@@ -7,16 +8,28 @@ function permissionModel(sequelize, DataTypes) {
 			comment: 'ID'
 		},
 		permission_name: {
-			type: DataTypes.STRING
-		},
+            type: DataTypes.STRING,
+            comment: 'permission name'
+        },
+        permission_order: {
+            type: DataTypes.INTEGER,
+            comment: '排序字段'
+        },
 		path_router: {
-			type: DataTypes.STRING
+            type: DataTypes.STRING,
+            comment: 'path router'
+        },
+        parent_id: {
+            type: DataTypes.BIGINT.UNSIGNED,
+            comment: 'parent id'
 		},
 		small_img: {
-			type: DataTypes.STRING
+            type: DataTypes.STRING,
+            comment: 'nav slider img'
         },
         big_img: {
-			type: DataTypes.STRING
+            type: DataTypes.STRING,
+            comment: 'main img'
 		}
 	}, {
 		freezeTableName: true,
@@ -25,7 +38,7 @@ function permissionModel(sequelize, DataTypes) {
 		collate: 'utf8_general_ci'
 	});
 
-	return permission;
+	return Permission;
 }
 
-export default permissionModel;
+export default PermissionModel;
