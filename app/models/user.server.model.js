@@ -18,10 +18,6 @@ function UserModel(sequelize, DataTypes) {
 		img: {
 			type: DataTypes.STRING,
 			comment: 'user header img'
-		},
-		level: {
-			type: DataTypes.INTEGER,
-			comment: '0: 员工, 1: 主管, 2: 管理员'
 		}
 	}, {
 		freezeTableName: true,

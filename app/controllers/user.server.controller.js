@@ -1,4 +1,6 @@
-import { getPermissionByParentId } from './permission.server.controller';
+import Sequelize from 'koa-orm/node_modules/sequelize';
+
+const Op = Sequelize.Op
 
 // 登录
 export async function login(ctx) {
@@ -100,36 +102,60 @@ export async function logout(ctx, next) {
 	}
 }
 
-// // 获取人员的权限
-// export async function getPermissionByUserId(ctx) {
-// 	const { User, Permission } = ctx.orm();
-// 	const userId = ctx.session.user.id;
+// 获取人员列表
+export async function getUsers(ctx) {
+	const user_id = ctx.session.user.id;
+	const { User, Department, Level } = ctx.orm();
 
-// 	const user_permission = await User.findById(userId, {
-// 		order: [
-// 			[Permission, 'permission_order']
-// 		],
-// 		include: [
-// 			{
-// 				model: Permission
-// 			}
-// 		]
-// 	});
+	const users = await User.findAll({
+		where: {
+			id: {
+				[Op.ne]: user_id
+			}
+		},
+		include: [
+            {
+                model: Department
+            }, {
+				model: Level
+			}
+        ]
+	});
 
-// 	const permissions = [];
-// 	const parrntIds = [];
+	const columns = [{
+		label: 'id',
+        prop: 'id'
+	}, {
+		label: '用户名',
+        prop: 'username'
+	}, {
+		label: '部门',
+        prop: 'department',
+	}, {
+		label: '职位',
+        prop: 'level',
+	}, {
+		label: '创建时间',
+        prop: 'createtime'
+	}];
 
-// 	console.log(user_permission.getPermissions());
-// 	// user_permission && user_permission.Permission.map((permission) => {
+	let datas = [];
+	users.forEach((user) => {
+		datas.push({
+			id: user.id,
+			username: user.username,
+			department: user.Department.department_name,
+			level: user.Level.level_name,
+			createtime: user.createdAt
+		});
+	});
 
-// 	// });
-
-
-// 	ctx.body = {
-// 		data: {
-// 			user_permission: user_permission
-// 		},
-// 		returnCode: '1001',
-// 		message: 'success' 
-// 	}
-// }
+	ctx.body = {
+		data: {
+			columns,
+			datas
+		},
+		returnCode: '1001',
+		message: 'success' 
+	}
+}

@@ -1,7 +1,9 @@
 // 整合表关系
 function initTables(sequelize, DataTypes) {
     const User = sequelize.import('./user.server.model.js');
+    const Level = sequelize.import('./level.server.model.js');
     const Permission = sequelize.import('./permission.server.model.js');
+    const User_Permission = sequelize.import('./user_permission.server.model.js');
     const Department = sequelize.import('./department.server.model.js');
     const Todo = sequelize.import('./todo.server.model.js');
     const Case = sequelize.import('./case.server.model.js');
@@ -11,19 +13,16 @@ function initTables(sequelize, DataTypes) {
     const Notic = sequelize.import('./notice.server.model.js');
 
     // 用户和权限是多对多的关系
-    const user_permission = sequelize.define('user_permission',{
-        status: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            comment: '是否展示大图标'
-        }
-    });
-    User.belongsToMany(Permission, {through: user_permission});
-    Permission.belongsToMany(User, {through: user_permission});
+    User.belongsToMany(Permission, {through: User_Permission});
+    Permission.belongsToMany(User, {through: User_Permission});
 
     // 用户和部门是多对一的关系
     Department.hasMany(User);
     User.belongsTo(Department);
+
+    // 用户和职位是多对一的关系
+    Level.hasMany(User);
+    User.belongsTo(Level);
 
     // 用户和待办事项为一对多
     User.hasMany(Todo);

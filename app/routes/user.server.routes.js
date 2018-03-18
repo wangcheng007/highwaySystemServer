@@ -10,5 +10,8 @@ export default function(router) {
 	// 获取登录信息
 	router.get('/user/info', user.info);
 
+	// 获取人员列表
+	router.get('/user/getUsers', user.getUsers);
+
 	return router;
 }
