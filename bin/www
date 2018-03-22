@@ -3,6 +3,9 @@
 import app from '../app';
 import config from '../config/config';
 
+import  easyMonitor from 'easy-monitor';
+easyMonitor('highwaySystemServer');
+
 if (!module.parent) {
 	const port = config.port || 3000;
 	app.listen(port);

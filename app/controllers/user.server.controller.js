@@ -124,19 +124,32 @@ export async function getUsers(ctx) {
 
 	const columns = [{
 		label: 'id',
+		align: 'center',
         prop: 'id'
 	}, {
 		label: '用户名',
+		align: 'center',
         prop: 'username'
 	}, {
+		label: '密码',
+		align: 'center',
+        prop: 'password'
+	},{
 		label: '部门',
-        prop: 'department',
+		align: 'center',
+        prop: 'department'
 	}, {
 		label: '职位',
-        prop: 'level',
+		align: 'center',
+        prop: 'level'
 	}, {
 		label: '创建时间',
+		align: 'center',
         prop: 'createtime'
+	}, {
+		label: '操作',
+		align: 'center',
+		prop: 'operate'
 	}];
 
 	let datas = [];
@@ -146,7 +159,9 @@ export async function getUsers(ctx) {
 			username: user.username,
 			department: user.Department.department_name,
 			level: user.Level.level_name,
-			createtime: user.createdAt
+			createtime: user.createdAt,
+			password: user.password,
+			operate: ['查看', '编辑', '修改密码']
 		});
 	});
 
