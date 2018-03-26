@@ -1,10 +1,9 @@
 // 权限model
 function PermissionModel(sequelize, DataTypes) {
-	const Permission = sequelize.define('Permission', {
+	const Permission = sequelize.define('PERMISSION', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
 		},
 		permission_name: {
@@ -20,7 +19,7 @@ function PermissionModel(sequelize, DataTypes) {
             comment: 'path router'
         },
         parent_id: {
-            type: DataTypes.BIGINT.UNSIGNED,
+            type: DataTypes.STRING,
             comment: 'parent id'
 		},
 		small_img: {

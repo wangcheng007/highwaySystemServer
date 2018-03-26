@@ -1,10 +1,9 @@
 // 部门model
 function DepartmentModel(sequelize, DataTypes) {
-	const Department = sequelize.define('Department', {
+	const Department = sequelize.define('DEPARTMENT', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
 		},
 		department_name: {

@@ -1,10 +1,9 @@
 // 案件类型model
 function CaseTypeModel(sequelize, DataTypes) {
-	const CaseType = sequelize.define('CaseType', {
+	const CaseType = sequelize.define('CASETYPE', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
 		},
 		case_type_name: {

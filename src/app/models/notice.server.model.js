@@ -1,14 +1,13 @@
 // 通知model
 function NoticeModel(sequelize, DataTypes) {
-	const Notice = sequelize.define('Notice', {
+	const Notice = sequelize.define('NOTICE', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
         },
         create_id: {
-            type: DataTypes.BIGINT.UNSIGNED,
+            type: DataTypes.STRING,
             comment: '创建者id'
         },
 		notice_title: {

@@ -1,10 +1,9 @@
 // 人员model
 function UserModel(sequelize, DataTypes) {
-	const User = sequelize.define('User', {
+	const User = sequelize.define('USER', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
 		},
 		username: {

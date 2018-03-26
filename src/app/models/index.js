@@ -11,6 +11,8 @@ function initTables(sequelize, DataTypes) {
     const Car = sequelize.import('./car.server.model.js');
     const CarType = sequelize.import('./cartype.server.model.js');
     const Notic = sequelize.import('./notice.server.model.js');
+    const File = sequelize.import('./file.server.model.js');
+    const User_Notice = sequelize.import('./user_notice.server.model.js');
 
     // 用户和权限是多对多的关系
     User.belongsToMany(Permission, {through: User_Permission});
@@ -41,14 +43,8 @@ function initTables(sequelize, DataTypes) {
     Car.belongsTo(CarType);
 
     // 用户和通知为多对多的关系
-    const user_notice = sequelize.define('user_notice',{
-        status: {
-            type: DataTypes.INTEGER,
-            comment: '是否已读, 0: 未读, 1: 已读'
-        }
-    });
-    User.belongsToMany(Notic, {through: user_notice});
-    Notic.belongsToMany(User, {through: user_notice});
+    User.belongsToMany(Notic, {through: User_Notice});
+    Notic.belongsToMany(User, {through: User_Notice});
 
     return User;
 }

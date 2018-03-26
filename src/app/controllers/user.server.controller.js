@@ -1,5 +1,8 @@
 import Sequelize from 'koa-orm/node_modules/sequelize';
 
+import { getAllLevel } from './level.server.controller';
+import { getAllDepartment } from './department.server.controller';
+
 const Op = Sequelize.Op
 
 // 登录
@@ -103,7 +106,7 @@ export async function logout(ctx, next) {
 }
 
 // 获取人员列表
-export async function getUsers(ctx) {
+export async function getUsers(ctx, next) {
 	const user_id = ctx.session.user.id;
 	const { User, Department, Level } = ctx.orm();
 
@@ -121,6 +124,9 @@ export async function getUsers(ctx) {
 			}
         ]
 	});
+
+	const levelList = await getAllLevel(ctx, next);
+	const departmentList = await getAllDepartment(ctx, next);
 
 	const columns = [{
 		label: 'id',
@@ -152,6 +158,35 @@ export async function getUsers(ctx) {
 		prop: 'operate'
 	}];
 
+	const query = [{
+		type: 'text',
+		lable: '姓名',
+		name: 'username',
+		placeholder: '请输入用户名'
+	}, {
+		type: 'select',
+		label: '职位',
+		name: 'level',
+		placeholder: '请选择职位',
+		options: levelList
+	}, {
+		type: 'select',
+		label: '部门',
+		name: 'department',
+		placeholder: '请选择部门',
+		options: departmentList
+	}, {
+		type: 'date',
+		label: '日期',
+		name: 'startTime',
+		placeholder: '开始日期'
+	}, {
+		type: 'date',
+		label: '日期',
+		name: 'endTime',
+		placeholder: '结束日期'
+	}];
+
 	let datas = [];
 	users.forEach((user) => {
 		datas.push({
@@ -168,9 +203,35 @@ export async function getUsers(ctx) {
 	ctx.body = {
 		data: {
 			columns,
-			datas
+			datas,
+			query,
+			levelList,
+			departmentList
 		},
 		returnCode: '1001',
 		message: 'success' 
+	}
+}
+
+export async function addUser(ctx, next) {
+	const { User } = ctx.orm();
+	const data = ctx.request.body;
+
+	let flag = await User.create(data);
+
+	if (flag) {
+		ctx.body = {
+			data: {
+				flag: flag
+			},
+			returnCode: '1001',
+			message: 'success' 
+		}
+	} else {
+		ctx.body = {
+			data: {},
+			returnCode: '2002',
+			message: 'fail' 
+		}
 	}
 }

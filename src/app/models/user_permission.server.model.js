@@ -1,11 +1,10 @@
 // 待办事项model
 
 function User_PermissionModel(sequelize, DataTypes) {
-	const User_Permission = sequelize.define('User_Permission', {
+	const User_Permission = sequelize.define('USER_PERMISSION', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
         },
         status: {

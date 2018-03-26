@@ -1,11 +1,10 @@
 // 职位表
 
 function LevelModel(sequelize, DataTypes) {
-	const Level = sequelize.define('Level', {
+	const Level = sequelize.define('LEVEL', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
         },
         level_name: {

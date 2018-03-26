@@ -1,10 +1,9 @@
 // 案件model
 function CaseModel(sequelize, DataTypes) {
-	const Case = sequelize.define('Cases', {
+	const Case = sequelize.define('CASE', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
 		},
 		case_title: {
@@ -20,7 +19,7 @@ function CaseModel(sequelize, DataTypes) {
             comment: '0: 待审核, 1: 审核中, 2: 退回, 3: 审核通过并归档'
         },
         agent_id: {
-            type: DataTypes.BIGINT.UNSIGNED,
+            type: DataTypes.STRING,
             comment: '经办人id'
         },
         case_imgs: {

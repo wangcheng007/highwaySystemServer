@@ -13,5 +13,8 @@ export default function(router) {
 	// 获取人员列表
 	router.get('/user/getUsers', user.getUsers);
 
+	// 新增人员
+	router.post('/user/addUser', user.addUser);
+
 	return router;
 }

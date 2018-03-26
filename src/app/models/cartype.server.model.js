@@ -1,11 +1,10 @@
 // 车辆品牌表
 
 function CarTypeModel(sequelize, DataTypes) {
-	const CarType = sequelize.define('CarType', {
+	const CarType = sequelize.define('CARTYPE', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
         },
         cartype_name: {

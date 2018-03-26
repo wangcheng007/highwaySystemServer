@@ -1,11 +1,10 @@
 // 待办事项model
 
 function TodoModel(sequelize, DataTypes) {
-	const Todo = sequelize.define('Todo', {
+	const Todo = sequelize.define('TODO', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
         },
         status: {

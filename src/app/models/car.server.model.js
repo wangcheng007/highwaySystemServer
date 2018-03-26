@@ -1,11 +1,10 @@
 // 车辆信息model
 
 function CarModel(sequelize, DataTypes) {
-	const Car = sequelize.define('Car', {
+	const Car = sequelize.define('CAR', {
 		id: {
-			type: DataTypes.BIGINT.UNSIGNED,
+			type: DataTypes.STRING,
 			primaryKey: true,
-			autoIncrement: true,
 			comment: 'ID'
         },
         car_user: {
