@@ -17,9 +17,14 @@ function UserModel(sequelize, DataTypes) {
 		img: {
 			type: DataTypes.STRING,
 			comment: 'user header img'
+		},
+		time_stamp: {
+			type: DataTypes.STRING,
+			comment: '时间戳'
 		}
 	}, {
 		freezeTableName: true,
+		createdAt: false,
 		updatedAt: false,
 		charset: 'utf8',
 		collate: 'utf8_general_ci'

@@ -4,17 +4,17 @@ const Op = Sequelize.Op
 
 // 获取用户的权限
 export async function getPermission(ctx, next) {
-    const user_id = ctx.session.user.id;
-    const { Permission, User } = ctx.orm();
+    const user_id = ctx.session.userinfo.id;
+    const { PERMISSION, USER } = ctx.orm();
 
     // 通过user_id 获取权限
-    const permissions = await Permission.findAll({
+    const permissions = await PERMISSION.findAll({
         order: [
-            ['id']
+            ['permission_order']
         ],
         include: [
             {
-                model: User,
+                model: USER,
                 where: {
                     id: user_id
                 }
@@ -29,9 +29,9 @@ export async function getPermission(ctx, next) {
     });
 
     // 通过parent_id 获取父权限
-    const parentPermissions = await Permission.findAll({
+    const parentPermissions = await PERMISSION.findAll({
         order: [
-            ['id']
+            ['permission_order']
         ],
         where:{
             'id': {
@@ -63,17 +63,17 @@ export async function getPermission(ctx, next) {
 
 // 获取展示在首页权限
 export async function getBigImgPermission(ctx) {
-    const user_id = ctx.session.user.id;
-    const { Permission, User } = ctx.orm();
+    const user_id = ctx.session.userinfo.id;
+    const { PERMISSION, USER } = ctx.orm();
 
     // 通过user_id 获取权限
-    const permissions = await Permission.findAll({
+    const permissions = await PERMISSION.findAll({
         order: [
-            ['id']
+            ['permission_order']
         ],
         include: [
             {
-                model: User,
+                model: USER,
                 where: {
                     id: user_id
                 }
@@ -84,10 +84,10 @@ export async function getBigImgPermission(ctx) {
     let bigImgPermissions = [];
 
     permissions.forEach((permission) => {
-        let users = permission.Users;
+        let users = permission.USERs;
 
         users.forEach((user) => {
-            if (user.User_Permission.status === 1) {
+            if (user.USER_PERMISSION.status === 1) {
                 bigImgPermissions.push(permission);
             }
         });
@@ -100,15 +100,16 @@ export async function getBigImgPermission(ctx) {
     }
 }
 
+// 删除在首页展示权限
 export async function deleteBigPermission(ctx) {
-    const user_id = ctx.session.user.id;
+    const user_id = ctx.session.userinfo.id;
     const permission_id = ctx.request.query.permissionId;
-    const { User_Permission } = ctx.orm();
+    const { USER_PERMISSION } = ctx.orm();
 
-    const flag = await User_Permission.update({status: 0},{
+    const flag = await USER_PERMISSION.update({status: 0},{
         where: {
-            UserId: user_id,
-            PermissionId: permission_id
+            USERId: user_id,
+            PERMISSIONId: permission_id
         }
     });
 
@@ -119,21 +120,22 @@ export async function deleteBigPermission(ctx) {
     }
 }
 
+// 新增在首页展示权限
 export async function addBigPermission(ctx) {
-    const user_id = ctx.session.user.id;
+    const user_id = ctx.session.userinfo.id;
     const bigPermissions = ctx.request.query['bigPermissions[]'] || [];
-    const { User_Permission } = ctx.orm();
+    const { USER_PERMISSION } = ctx.orm();
 
-    let flag = await User_Permission.update({status: 0},{
+    let flag = await USER_PERMISSION.update({status: 0},{
         where: {
-            UserId: user_id
+            USERId: user_id
         }
     });
 
-    flag = await User_Permission.update({status: 1},{
+    flag = await USER_PERMISSION.update({status: 1},{
         where: {
-            UserId: user_id,
-            PermissionId:{
+            USERId: user_id,
+            PERMISSIONId:{
                 [Op.in]: [...bigPermissions]
             } 
         }

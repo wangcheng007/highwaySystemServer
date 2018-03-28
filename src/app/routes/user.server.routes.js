@@ -16,5 +16,14 @@ export default function(router) {
 	// 新增人员
 	router.post('/user/addUser', user.addUser);
 
+	// 删除人员
+	router.delete('/user/deleteUser', user.deleteUser);
+
+	// 修改密码
+	router.post('/user/updatePassword', user.updatePassword);
+	
+	// 修改基本信息
+	router.post('/user/editUser', user.editUser);
+	
 	return router;
 }
