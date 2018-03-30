@@ -54,6 +54,8 @@ export async function login(ctx) {
 
 	let userinfo = {
 		username: user.username,
+		department: user.DEPARTMENTId,
+		level: user.LEVELId,
 		img: user.img,
 		id: user.id
 	}

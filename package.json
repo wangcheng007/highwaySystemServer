@@ -16,11 +16,13 @@
     "koa-bodyparser": "^4.2.0",
     "koa-csrf": "^3.0.6",
     "koa-logger": "^3.1.0",
+    "koa-multer": "^1.0.2",
     "koa-orm": "^2.3.0",
     "koa-redis": "^3.1.2",
     "koa-router": "^7.3.0",
     "koa-session": "^5.8.1",
-    "mysql2": "^1.5.2"
+    "mysql2": "^1.5.2",
+    "rimraf": "^2.6.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

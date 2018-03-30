@@ -12,4 +12,6 @@ export default function(router) {
     
     // 添加权限在首页展示
     router.get('/permission/addBigPermission', permission.addBigPermission);
+
+    return router;
 }
