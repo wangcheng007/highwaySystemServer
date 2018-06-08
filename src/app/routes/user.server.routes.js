@@ -25,5 +25,11 @@ export default function(router) {
 	// 修改基本信息
 	router.post('/user/editUser', user.editUser);
 	
+	// 修改头像
+	router.get('/user/changeHeaderImg', user.changeHeaderImg);
+
+	// 获取人员和部门信息
+	router.get('/user/getDepartmentAndUser', user.getDepartmentAndUser);
+
 	return router;
 }

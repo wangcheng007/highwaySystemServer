@@ -9,10 +9,15 @@ function DepartmentModel(sequelize, DataTypes) {
 		department_name: {
 			type: DataTypes.STRING,
 			comment: 'department name'
+		},
+		time_stamp: {
+			type: DataTypes.STRING,
+			comment: '时间戳'
 		}
 	}, {
 		freezeTableName: true,
 		updatedAt: false,
+		createdAt: false,
 		charset: 'utf8',
 		collate: 'utf8_general_ci'
 	});

@@ -29,10 +29,15 @@ function PermissionModel(sequelize, DataTypes) {
         big_img: {
             type: DataTypes.STRING,
             comment: 'main img'
-		}
+		},
+        time_stamp: {
+            type: DataTypes.STRING,
+            comment: '时间戳'
+        }
 	}, {
 		freezeTableName: true,
 		updatedAt: false,
+        createdAt: false,
 		charset: 'utf8',
 		collate: 'utf8_general_ci'
 	});

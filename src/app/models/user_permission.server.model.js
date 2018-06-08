@@ -11,10 +11,15 @@ function User_PermissionModel(sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             allowNull: false,
             comment: '是否展示大图标, 0:不展示, 1: 展示'
+        },
+        time_stamp: {
+            type: DataTypes.STRING,
+            comment: '时间戳'
         }
 	}, {
 		freezeTableName: true,
 		updatedAt: false,
+        createdAt: false,
 		charset: 'utf8',
 		collate: 'utf8_general_ci'
 	});

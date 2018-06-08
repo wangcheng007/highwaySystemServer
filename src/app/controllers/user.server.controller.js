@@ -1,10 +1,10 @@
-import Sequelize from 'koa-orm/node_modules/sequelize';
+import Sequelize from 'sequelize';
 import uuidV4 from 'uuid/v4';
 import { getAllLevel } from './level.server.controller';
 import { getAllDepartment } from './department.server.controller';
 import crypto from 'crypto';
 
-const Op = Sequelize.Op
+const Op = Sequelize.Op;
 
 function password2md5(password) {
 	const md5 = crypto.createHash('md5');
@@ -74,10 +74,24 @@ export async function login(ctx) {
 
 // 获取登录信息
 export async function info(ctx) {
-	let userinfo = ctx.session.userinfo;
+	const { USER } = ctx.orm();
 	let authenticated = ctx.session.authenticated;
 
 	if (authenticated) {
+		let user_id = ctx.session.userinfo && ctx.session.userinfo.id;
+		let user = await USER.find({
+			where: {
+				id: user_id
+			}
+		});
+		const userinfo = {
+			id: user.id,
+			username: user.username,
+			img: user.img,
+			level: user.LEVELId,
+			department: user.DEPARTMENTId
+		};
+
 		ctx.body = {
 			data: {
 				userinfo
@@ -88,7 +102,7 @@ export async function info(ctx) {
 	} else {
 		ctx.body = {
 			data: {},
-			returnCode: '2002',
+			returnCode: '3002',
 			message: 'fail' 
 		}
 	}
@@ -145,9 +159,9 @@ export async function getUsers(ctx, next) {
 	}
 	let users = await USER.findAll({
 		where: {
-			id: {
-				[Op.ne]: user_id
-			},
+			// id: {
+			// 	[Op.ne]: user_id
+			// },
 			...whereStat
 		},
 		order: [
@@ -203,7 +217,7 @@ export async function getUsers(ctx, next) {
 		label: '操作',
 		align: 'center',
 		prop: 'operate',
-		width: '240'
+		width: '300'
 	}];
 
 	const query = [{
@@ -244,8 +258,7 @@ export async function getUsers(ctx, next) {
 			department: user.DEPARTMENT ? user.DEPARTMENT.department_name : '',
 			levelId: user.LEVEL ? user.LEVEL.id : '',
 			level: user.LEVEL ? user.LEVEL.level_name : '',
-			createtime: parseInt(user.time_stamp),
-			operate: ['查看', '编辑', '修改密码']
+			createtime: parseInt(user.time_stamp)
 		});
 	});
 
@@ -280,13 +293,11 @@ export async function addUser(ctx, next) {
 		}
 	});
 
-	let use = users;
-
 	if (users && users.length) {
 		ctx.body = {
 			data: {},
-			returnCode: '400',
-			message: '该用户名已存在' 
+			returnCode: '4000',
+			message: '该用户名已存在' 
 		}
 
 		return;
@@ -397,3 +408,82 @@ export async function editUser(ctx, next) {
 	}
 
 }
+
+// 修改头像
+export async function changeHeaderImg(ctx) {
+	const { USER } = ctx.orm();
+	const filePath = ctx.request.query.filePath;
+	const user_id = ctx.session.userinfo.id;
+
+	// 修改人员信息
+	let flag = await USER.update({
+		img: filePath
+	}, {
+		where: {
+			id: user_id
+		}
+	});
+
+	ctx.body = {
+		data: {
+			flag
+		},
+		returnCode: '1001',
+		message: 'success'
+	}
+}
+
+// 获取人员和部门信息
+export async function getDepartmentAndUser(ctx) {
+	const { DEPARTMENT, USER, LEVEL } = ctx.orm();
+	const userid = ctx.session.userinfo.id;
+
+	const departmentAndUsers = await DEPARTMENT.findAll({
+		include: [{
+			model: USER,
+			where: {
+				id: {
+					[Op.ne]: userid
+				}
+			},
+			include: [{
+				model: LEVEL
+			}]
+		}]
+	});
+
+	let data = [];
+	departmentAndUsers.forEach((item) => {
+		let obj = {
+			id: `${item.id}+FFFFFF`,
+			label: item.department_name,
+			children: []
+		}
+
+		if (item.USERs && item.USERs.length) {
+			const users = item.USERs.sort((a, b) => {
+				return a.LEVELId - b.LEVELId
+			});
+
+
+			users.forEach((user) => {
+				obj.children.push({
+					img: user.img,
+					id: user.id,
+					label: user.username,
+					levelName: user.LEVEL.level_name
+				});
+			});
+		}
+
+		data.push(obj);
+	});
+
+	ctx.body = {
+		data: {
+			data
+		},
+		returnCode: '1001',
+		message: 'success'
+	}
+};

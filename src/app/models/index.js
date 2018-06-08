@@ -10,9 +10,12 @@ function initTables(sequelize, DataTypes) {
     const CaseType = sequelize.import('./casetype.server.model.js');
     const Car = sequelize.import('./car.server.model.js');
     const CarType = sequelize.import('./cartype.server.model.js');
-    const Notic = sequelize.import('./notice.server.model.js');
+    const Notice = sequelize.import('./notice.server.model.js');
     const File = sequelize.import('./file.server.model.js');
     const User_Notice = sequelize.import('./user_notice.server.model.js');
+    const Chat = sequelize.import('./chat.server.model.js');
+    const Car_Cartype = sequelize.import('./car_cartype.server.model.js');
+    const Driver = sequelize.import('./driver.server.model.js');
 
     // 用户和权限是多对多的关系
     User.belongsToMany(Permission, {through: User_Permission});
@@ -30,21 +33,36 @@ function initTables(sequelize, DataTypes) {
     User.hasMany(Todo);
     Todo.belongsTo(User);
 
-    // 待办事项和案件为一对一的关系
-    Todo.hasOne(Case);
-    Case.belongsTo(Todo);
+    // // 待办事项和案件为一对一的关系
+    // Case.hasOne(Todo);
+    // Todo.belongsTo(Case);
 
     // 案件和案件类型为多对一的关系
     CaseType.hasMany(Case);
     Case.belongsTo(CaseType);
 
-    // 车辆信息和车辆品牌是多对一的关系
-    CarType.hasMany(Car);
-    Car.belongsTo(CarType);
+    // 用户和案件为一对多的关系
+    User.hasMany(Case);
+    Case.belongsTo(User);
+
+    // 用户和案件为一对多的关系
+    User.hasMany(Car);
+    Car.belongsTo(User);
+
+    // 车辆信息和车辆品牌是多对多的关系
+    CarType.belongsToMany(Car, {through: Car_Cartype});
+    Car.belongsToMany(CarType, {through: Car_Cartype});
+
+    // 车辆信息和事故为一对多的关系
+    Car.hasMany(Case);
+    Case.belongsTo(Car);
+
+    Driver.hasMany(Car);
+    Car.belongsTo(Driver);
 
     // 用户和通知为多对多的关系
-    User.belongsToMany(Notic, {through: User_Notice});
-    Notic.belongsToMany(User, {through: User_Notice});
+    User.belongsToMany(Notice, {through: User_Notice});
+    Notice.belongsToMany(User, {through: User_Notice});
 
     return User;
 }

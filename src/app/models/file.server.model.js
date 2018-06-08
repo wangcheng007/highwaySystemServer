@@ -17,9 +17,14 @@ function FileModel(sequelize, DataTypes) {
         file_des: {
             type: DataTypes.STRING,
 			comment: 'file des'
-        }
+		},
+		time_stamp: {
+			type: DataTypes.STRING,
+			comment: '时间戳'
+		}
 	}, {
 		freezeTableName: true,
+		createdAt: false,
 		updatedAt: false,
 		charset: 'utf8',
 		collate: 'utf8_general_ci'

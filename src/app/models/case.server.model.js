@@ -16,7 +16,7 @@ function CaseModel(sequelize, DataTypes) {
         },
         case_status: {
             type: DataTypes.INTEGER,
-            comment: '0: 待审核, 1: 审核中, 2: 退回, 3: 审核通过并归档'
+            comment: '0: 待审核, 1: 待归档, 2: 退回, 3: 已归档'
         },
         agent_id: {
             type: DataTypes.STRING,
@@ -25,10 +25,23 @@ function CaseModel(sequelize, DataTypes) {
         case_imgs: {
             type: DataTypes.STRING,
             comment: '多个图片用,隔开'
+        },
+        x_point: {
+            type: DataTypes.FLOAT,
+            comment: '经度'
+        },
+        y_point: {
+            type: DataTypes.FLOAT,
+            comment: '维度'
+        },
+        time_stamp: {
+            type: DataTypes.STRING,
+            comment: '时间戳'
         }
 	}, {
 		freezeTableName: true,
 		updatedAt: false,
+        createdAt: false,
 		charset: 'utf8',
 		collate: 'utf8_general_ci'
 	});

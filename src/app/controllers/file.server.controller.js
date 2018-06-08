@@ -4,6 +4,7 @@ import uuidV4 from 'uuid/v4';
 import fs from 'fs';
 import path from 'path';
 import rimraf from 'rimraf';
+import { reject } from 'any-promise';
 
 const MAX_FILE_SIZE =  20 * 1024 * 1024;
 const FILE_ID_RANDOM = 'd006d56c-b170-4ef5-8339-e4d2eb7fd70c';
@@ -23,7 +24,7 @@ const storage = multer.diskStorage({
         const destPath = path.resolve(__dirname, `../../../tmpdir/${FILEId}`);
         const tmpdir = path.resolve(__dirname, `../../../tmpdir`);
         const uploaddir = path.resolve(__dirname, `../../../uploads`);
-         
+        
         if (!fs.existsSync(uploaddir)) {
             fs.mkdirSync(uploaddir);
         }
@@ -52,7 +53,8 @@ export const upload = multer({
 }).single('file');
 
 export async function closeUpload(ctx, next) {
-    const { FILE } = ctx.orm();
+    const { FILE, USER } = ctx.orm();
+    const user_id = ctx.session.userinfo.id;
 
     let { sign, total, chunk, type } = ctx.req.body;
 
@@ -68,90 +70,109 @@ export async function closeUpload(ctx, next) {
     // 最后存入的路径
     const uploadFilePath = path.resolve(__dirname, `../../../uploads/${FILEId}.tmp`);
 
-    let dataObj = {
-        FILEId: uuidV4()
-    }
+    // const finalPath = path.resolve(file.destination, `${originalname}.tmp`);
 
     const rs = fs.createReadStream(file.path);
     const ws = fs.createWriteStream(filePath, {
         flags: 'a+'
     });
 
-    // const renameFile = function () {
-    //     return new Promise((resolve, reject) => {
-    //         if (total - 1 === chunk) { // 最后一个分片写入成功，则修正文件名
-    //             const finalPath = path.resolve(file.destination, originalname);
-    //             console.log(1);
-    //             fs.rename(filePath, finalPath, err => {
-    //                 if (err) {
-    //                     reject('最后分片修正文件名失败');
-    //                 } else {
-    //                     resolve();
-    //                 }
-    //             });
-    //         }
-    //         resolve();
-    //     });
-    // }
+    const renameFile =  function () {
+        return new Promise((resolve, reject) => {
+            if (total - 1 === chunk) {
+                const finalPath = path.resolve(file.destination, `${originalname}.tmp`);
+                fs.renameSync(filePath, finalPath);
 
-    rs.pipe(ws).on('finish', () => {
-        rimraf(file.path, err => {
-            if (err) {
-                console.log(`删除临时文件失败: ${err.message}`);
-            }
-        });
-
-        if (total - 1 === chunk) {
-            const finalPath = path.resolve(file.destination, originalname);
-            fs.rename(filePath, finalPath);
-
-            // 将文件添加到upload文件夹
-            // 新建流
-            const rs_last = fs.createReadStream(finalPath);
-            const ws_last = fs.createWriteStream(uploadFilePath, {
-                flags: 'a+'
-            });
-            rs_last.pipe(ws_last).on('finish', () => {
-                const fileAc = path.resolve(__dirname, `../../../uploads/${FILEId}.${fileType(type)}`);
-                fs.rename(uploadFilePath, fileAc);
-
-                // rimraf(path.resolve(finalPath, '../'), err => {
-                //     if (err) {
-                //         console.log(`删除临时文件失败: ${err.message}`);
-                //     }
-                // });
-
-                const flag = await FILE.create({
-                    ...dataObj,
+                const rs_last = fs.createReadStream(finalPath);
+                const ws_last = fs.createWriteStream(uploadFilePath, {
+                    flags: 'a+'
                 });
-            });
-        }
-        // Promise.all([
-        //     // writeInfo(),
-        //     renameFile()
-        // ]).then(() => {
-        //     ctx.body = {
-        //         data: {
-        //             fileId: dataObj.FILEId
-        //         },
-        //         returnCode: '1001',
-        //         messafe: 'success'
-        //     }
-        // }).catch(err => {
-        //     throw new Error(err);
-        // });
-    });
-    rs.on('error', err => {
-        rs.end();
-        ws.end();
-        throw new Error('上传文件写入失败');
-    });
 
-    ctx.body = {
-        data: {
-            fileId: dataObj.FILEId
-        },
-        returnCode: '1001',
-        messafe: 'success'
+                rs_last.pipe(ws_last).on('finish', () => {
+                    const fileAc = path.resolve(__dirname, `../../../uploads/${FILEId}.${fileType(type)}`);
+                    fs.renameSync(uploadFilePath, fileAc);
+
+                    rimraf(path.resolve(finalPath, '../'), err => {
+                        if (err) {
+                            console.log(`删除临时文件失败: ${err.message}`);
+                        }
+                    });
+
+                    resolve();
+                });
+            }
+            
+        });
+    }
+
+    const finishUploadFile = function() {
+        return new Promise((resolve, reject) => {
+            try {
+                rs.pipe(ws).on('finish', () => {
+                    rimraf(file.path, err => {
+                        if (err) {
+                            reject();
+                        }
+                    });
+
+                    resolve();
+                });
+            } catch (error) {
+                reject();
+            }
+        }) 
+    }
+
+    const createFile = function() {
+        return new Promise((resolve, reject) => {
+            let flag = FILE.create({
+                id: FILEId,
+                file_name: originalname,
+                file_path: `${FILEId}.${fileType(type)}`,
+                file_des: '',
+                time_stamp: `${Date.now()}`
+            });
+
+            if(flag) {
+                resolve()
+            }else {
+                reject();
+            }
+        }) 
+    }
+    
+    await Promise.all([
+        finishUploadFile(),
+        createFile()
+    ]).then(async () => {
+
+        await Promise.all([
+            renameFile()
+        ]).then(() => {
+            ctx.body = {
+                data: {
+                    imgPath: `${FILEId}.${fileType(type)}`,
+                    id: FILEId
+                },
+                returnCode: '1001',
+                message: 'success'
+            }
+        })
+    })
+}
+
+
+export async function downloadFile(ctx) {
+    const file_id = ctx.params.id;
+    const file_path = path.resolve(__dirname, `../../../uploads/${file_id}`);
+
+    if (fs.existsSync(file_path)) {
+        ctx.body = fs.createReadStream(file_path);
+    } else {
+        ctx.body = {
+            data:{},
+            returnCode: '4004',
+            message: 'fail'
+        }
     }
 }
